@@ -1,0 +1,18 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
+#@ load("@ytt:overlay", "overlay")
+---
+
+#@ def tmc_local_stack_pkgi():
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: tmc-local-stack
+#@ end
+
+#@overlay/match by=overlay.subset(tmc_local_stack_pkgi())
+---
+metadata:
+  annotations:
+    #@overlay/match missing_ok=True
+    ext.packaging.carvel.dev/ytt-paths-from-secret-name.0: tmc-local-stack-overlay

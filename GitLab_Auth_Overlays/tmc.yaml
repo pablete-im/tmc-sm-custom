@@ -1,0 +1,35 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
+#@ load("@ytt:overlay", "overlay")
+---
+
+#@ def tmc_pkgi():
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: tanzu-mission-control
+  namespace: tmc-local
+#@ end
+
+#@overlay/match by=overlay.subset(tmc_pkgi())
+---
+metadata: 
+  annotations:
+    #@overlay/match missing_ok=True
+    ext.packaging.carvel.dev/ytt-paths-from-secret-name.0: tmc-overlays
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tmc-overlays
+  namespace: tmc-local
+stringData:
+  tmc-overlay.yaml: #@ data.read("tmc-overlay.ytt")
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tmc-local-stack-overlay
+  namespace: tmc-local
+stringData:
+  tmc-local-stack-overlay.yaml: #@ data.read("tmc-local-stack-overlay.ytt")

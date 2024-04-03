@@ -1,0 +1,17 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
+#@ load("@ytt:overlay", "overlay")
+---
+
+#@ def idprovider_match():
+apiVersion: idp.supervisor.pinniped.dev/v1alpha1
+kind: OIDCIdentityProvider
+#@ end
+
+#@overlay/match by=overlay.subset(idprovider_match())
+---
+spec:
+  authorizationConfig:
+    #@overlay/replace
+    additionalScopes:
+    - email
