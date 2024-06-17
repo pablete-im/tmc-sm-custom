@@ -1,0 +1,35 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
+#@ load("@ytt:overlay", "overlay")
+---
+
+#@ def istio_base_pkgi():
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: istio-base
+  namespace: istio-base
+#@ end
+
+#@overlay/match by=overlay.subset(istio_base_pkgi())
+---
+metadata: 
+  annotations:
+    #@overlay/match missing_ok=True
+    ext.packaging.carvel.dev/ytt-paths-from-secret-name.0: istio-base-overlay-secret
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: istio-base-overlay-secret
+  namespace: istio-base
+stringData:
+  add-ns-label.yml: |
+    #@ load("@ytt:overlay", "overlay")
+    #@overlay/match by=overlay.subset({"kind":"Namespace", "metadata": {"name":"istio-system"}}),expects="1+"
+    ---
+    metadata:
+      #@overlay/match missing_ok=True
+      labels:
+        #@overlay/match missing_ok=True
+        pod-security.kubernetes.io/enforce: privileged    
