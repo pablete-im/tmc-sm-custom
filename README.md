@@ -31,6 +31,10 @@ kubectl get PackageInstall -n tmc-local tanzu-mission-control -o yaml | ytt -f t
 
 This Overlay sets up istio-system namespace labels for PSA in K8S > 1.26. This is required as stated in this doc: https://docs.vmware.com/en/VMware-vSphere/8.0//vsphere-with-tanzu-tkg/GUID-B57DA879-89FD-4C34-8ADB-B21CB3AE67F6.html
 
+The multicluster overlay also sets the topology.istio.io/network label for the istio-system namespace. This is specified in these docs: 
+* Multi-Primary on different networks: https://istio.io/latest/docs/setup/install/multicluster/multi-primary_multi-network/ 
+* Primary-Remote on different networks: https://istio.io/latest/docs/setup/install/multicluster/primary-remote_multi-network/
+
 ISTIO packages need to be installed in a specific order:
 1. base
 2. istiod
